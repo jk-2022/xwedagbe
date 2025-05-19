@@ -19,7 +19,7 @@ class ProductSerializer(serializers.ModelSerializer):
     image_files = serializers.ListField(
         child=serializers.ImageField(write_only=True), write_only=True, required=False)
     reviews = ReviewSerializer(many=True, read_only=True)
-    user = serializers.ReadOnlyField(source='user.username')
+    user = serializers.ReadOnlyField(source='user.phonr_number')
     # category=CategorySerializer(read_only=True)
     # type=TypeSerializer(read_only=True)
     # ville=VilleSerializer(read_only=True)

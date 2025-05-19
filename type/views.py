@@ -7,6 +7,6 @@ class TypeListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = TypeSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-class TypeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class TypeRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Type.objects.all()
     serializer_class = TypeSerializer

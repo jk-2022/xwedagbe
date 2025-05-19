@@ -1,22 +1,18 @@
-
-
 from django.db import models
-
 from django.conf import settings
 
+from category.models import Category
+from villes.models import Ville
+from type.models import Type
+
 User= settings.AUTH_USER_MODEL
-
-    
-
-
-
 
 class Product(models.Model):
     name=models.CharField(max_length=50)
     user = models.ForeignKey(User, related_name='products', on_delete=models.CASCADE)
-    type=models.ForeignKey("Type", on_delete=models.CASCADE)
-    category=models.ForeignKey("Category", on_delete=models.CASCADE)
-    ville=models.ForeignKey("Ville", on_delete=models.CASCADE)
+    type=models.ForeignKey(Type, on_delete=models.CASCADE)
+    category=models.ForeignKey(Category, on_delete=models.CASCADE)
+    ville=models.ForeignKey(Ville, on_delete=models.CASCADE)
     quartier=models.CharField(max_length=100)
     image=models.ImageField(upload_to="media", blank=True, null=True, default="")
     description=models.JSONField(default=dict)

@@ -36,17 +36,15 @@ def add_user_to_group(request):
     return Response({"message": "User added to product_manager group"}, status=status.HTTP_200_OK)
 
 
-class ProductList(generics.ListAPIView):
+class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-class ProductDelete(generics.RetrieveUpdateDestroyAPIView):
+class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -54,18 +52,22 @@ class ProductDelete(generics.RetrieveUpdateDestroyAPIView):
 class ProductCreateView(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    # permission_classes = [permissions.IsAuthenticated]
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-        
-class ProductUpdateView(generics.UpdateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+
+# class ProductDelete(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+# class ProductUpdateView(generics.UpdateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#     permission_classes = [IsAuthenticated]
     
-    def perform_update(self, serializer):
-        serializer.save(user=self.request.user)
+#     def perform_update(self, serializer):
+#         serializer.save(user=self.request.user)
         
 class ReviewListCreate(generics.ListCreateAPIView):
     queryset = Review.objects.all()
