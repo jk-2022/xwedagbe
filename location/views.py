@@ -56,6 +56,33 @@ class ProductCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+
+class MesProductsAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        products = Product.objects.filter(user=request.user)
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+ 
+class UpdateProductStatusAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request, pk):
+        try:
+            Product = Product.objects.get(pk=pk, user=request.user)
+        except Product.DoesNotExist:
+            return Response({"detail": "Product introuvable."}, status=status.HTTP_404_NOT_FOUND)
+
+        disponibilite = request.data.get("disponibilite")
+        if disponibilite is not None:
+            Product.disponibilite = disponibilite
+            Product.save()
+            return Response({"message": "Statut mis à jour avec succès."})
+        
+        return Response({"detail": "Champ disponibilite requis."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 # class ProductDelete(generics.RetrieveUpdateDestroyAPIView):
 #     queryset = Product.objects.all()
 #     serializer_class = ProductSerializer

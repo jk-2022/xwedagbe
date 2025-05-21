@@ -1,8 +1,11 @@
 # store/serializers.py
 
 from rest_framework import serializers
+from category.serializers import CategorySerializer
+from type.serializers import TypeSerializer
+from villes.serializers import VilleSerializer
 from .models import Product, ProductImages, Review
-
+from users.serializers import UserSerializer
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,10 +22,11 @@ class ProductSerializer(serializers.ModelSerializer):
     image_files = serializers.ListField(
         child=serializers.ImageField(write_only=True), write_only=True, required=False)
     reviews = ReviewSerializer(many=True, read_only=True)
-    user = serializers.ReadOnlyField(source='user.phonr_number')
-    # category=CategorySerializer(read_only=True)
-    # type=TypeSerializer(read_only=True)
-    # ville=VilleSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+    category=CategorySerializer(read_only=True)
+    type=TypeSerializer(read_only=True)
+    ville=VilleSerializer(read_only=True)
+
     class Meta:
         model = Product
         fields = '__all__'
