@@ -23,9 +23,9 @@ class ProductSerializer(serializers.ModelSerializer):
         child=serializers.ImageField(write_only=True), write_only=True, required=False)
     reviews = ReviewSerializer(many=True, read_only=True)
     user = UserSerializer(read_only=True)
-    category=CategorySerializer(read_only=True)
-    type=TypeSerializer(read_only=True)
-    ville=VilleSerializer(read_only=True)
+    # category=CategorySerializer(read_only=True)
+    # type=TypeSerializer(read_only=True)
+    # ville=VilleSerializer(read_only=True)
 
     class Meta:
         model = Product

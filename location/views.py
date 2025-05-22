@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from .models import Product, Review
 from rest_framework.response import Response
 from .serializers import *
+from .permissions import IsDemarcheur
 from habitalink.permissions import IsOwnerOrReadOnly, IsProductManager
 
 @api_view(['GET'])
@@ -36,8 +37,8 @@ def add_user_to_group(request):
     return Response({"message": "User added to product_manager group"}, status=status.HTTP_200_OK)
 
 
-class ProductListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
+class ProductListCreateAPIView(generics.ListAPIView):
+    queryset = Product.objects.filter(disponibilite=True)
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -52,13 +53,15 @@ class ProductRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView)
 class ProductCreateView(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,IsDemarcheur]
+    
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class MesProductsAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsDemarcheur]
 
     def get(self, request):
         products = Product.objects.filter(user=request.user)
@@ -70,14 +73,14 @@ class UpdateProductStatusAPIView(APIView):
 
     def patch(self, request, pk):
         try:
-            Product = Product.objects.get(pk=pk, user=request.user)
+            product = Product.objects.get(pk=pk, user=self.request.user)
         except Product.DoesNotExist:
             return Response({"detail": "Product introuvable."}, status=status.HTTP_404_NOT_FOUND)
 
         disponibilite = request.data.get("disponibilite")
         if disponibilite is not None:
-            Product.disponibilite = disponibilite
-            Product.save()
+            product.disponibilite = disponibilite
+            product.save()
             return Response({"message": "Statut mis à jour avec succès."})
         
         return Response({"detail": "Champ disponibilite requis."}, status=status.HTTP_400_BAD_REQUEST)
