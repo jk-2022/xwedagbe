@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import UserRegisterSerializer, UserLoginSerializer, CustomTokenObtainPairSerializer, UserSerializer
+from .serializers import DemandeDemarcheurSerializer, UserRegisterSerializer, UserLoginSerializer, CustomTokenObtainPairSerializer, UserSerializer
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -13,7 +13,17 @@ def get_tokens_for_user(user):
         "access": str(refresh.access_token),
     }
 
+class UserStatutView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        user = request.user
+        return Response({
+            "is_demarcheur": user.is_demarcheur,
+            "is_staff": user.is_staff,
+            "is_superuser": user.is_superuser,
+        })
+    
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
@@ -65,3 +75,17 @@ class UserMeView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
+
+class DemandeDemarcheurView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = DemandeDemarcheurSerializer(
+            instance=request.user,
+            data={'demande_demarcheur': True},
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Demande envoyée avec succès.'})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

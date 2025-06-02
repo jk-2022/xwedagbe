@@ -3,6 +3,18 @@ from django.contrib.auth import authenticate
 from .models import CustomUser
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+
+
+class DemandeDemarcheurSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['demande_demarcheur']
+
+    def validate_demande_demarcheur(self, value):
+        if self.instance.is_demarcheur:
+            raise serializers.ValidationError("Vous êtes déjà un démarcheur.")
+        return value
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 

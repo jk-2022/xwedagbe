@@ -32,6 +32,7 @@ AUTH_USER_MODEL = "users.CustomUser"
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,10 +45,12 @@ INSTALLED_APPS = [
     'category',
     'villes',
     'type',
-    'users',
+    'users.apps.UsersConfig',
+    'notifications',
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -75,6 +78,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'habitalink.wsgi.application'
+ASGI_APPLICATION = "habitalink.asgi.application"
+
+# Channels layer (ex: Redis)
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Pour tests simples
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -131,6 +142,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_URL= '/media/'
 MEDIA_ROOT = BASE_DIR / "media"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
