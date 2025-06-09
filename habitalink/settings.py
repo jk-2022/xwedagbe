@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'type',
     'users.apps.UsersConfig',
     'notifications',
+    'chat',
 ]
 
 MIDDLEWARE = [
