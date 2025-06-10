@@ -51,7 +51,7 @@ class UserRoomsView(APIView):
 
             data.append({
                 "room_id": room.id,
-                "other_user": {
+                "user": {     #Autre utilisateur, ds notre cas product owner
                     "id": other_user.id,
                     "phone_number": other_user.phone_number,
                     "full_name": other_user.full_name
